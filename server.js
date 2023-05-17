@@ -1,16 +1,14 @@
 
-const axios = require("axios");
+const get = require("axios").get;
 const express = require("express");
 const app = express();
-const router = express.Router();
 const cors = require("cors");
 require("dotenv").config();
-const serverless = require("serverless-http");
-const weatherData = require("/data/apiWeather.json");
+const weatherData = require("./data/weather.json");
 
 
 // Set the port to 8000
-// const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 3001;
 
 // Enable CORS for requests coming from http://localhost:3000
 app.use(
@@ -46,10 +44,10 @@ class Movie {
   }
 }
 // Route for getting movie data
-router.get("/movies", async (req, res, next) => {
+app.get("/movies", async (req, res, next) => {
   const { city_name } = req.query;
   try {
-    let movieResponse = await axios.get(
+    let movieResponse = await get(
       `https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIE_API_KEY}&query=${city_name}&page=1&include_adult=false`
     );
     let movieData = movieResponse.data;
@@ -76,11 +74,11 @@ router.get("/movies", async (req, res, next) => {
   }
 });
 // Route for getting weather data
-router.get("/weather", async (req, res, next) => {
+app.get("/weather", async (req, res, next) => {
   const { lat, lon } = req.query;
 
   try {
-    let apiWeatherData = await axios.get(
+    let apiWeatherData = await get(
       `https://api.weatherbit.io/v2.0/forecast/daily?lat=${lat}&lon=${lon}&key=${process.env.WEATHER_API_KEY}`
     );
 
@@ -95,7 +93,7 @@ router.get("/weather", async (req, res, next) => {
 });
 
 // Route for getting all weather data
-router.get("/", (req, res, next) => {
+app.get("/", (req, res, next) => {
   if (!weatherData) {
     const error = new Error("Internal Server Error");
     error.status = 500;
@@ -116,11 +114,9 @@ app.use((error, req, res, next) => {
   res.status(status).json({ message });
 });
 
-app.use(`/.netlify/functions/server`, router);
-// Start listening for incoming requests
-// app.listen(PORT, () => {
-//   console.log(`listening on port ${PORT}`);
-// });
 
-module.exports = app;
-module.exports.handler = serverless(app);
+// Start listening for incoming requests
+app.listen(PORT, () => {
+  console.log(`listening on port ${PORT}`);
+});
+
