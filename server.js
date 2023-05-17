@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 3001;
 // Enable CORS for requests coming from http://localhost:3000
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "https://cityexplorer-codefellow.netlify.app/",
   })
 );
 
