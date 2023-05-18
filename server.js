@@ -17,14 +17,6 @@ app.use(
   })
 );
 
-// Define a Forecast class to store data for each day's forecast
-class ForeCast {
-  constructor(date, desc) {
-    this.date = date;
-    this.desc = desc;
-  }
-}
-
 // Define a Movie class to store data for each movie
 class Movie {
   constructor(
@@ -73,24 +65,6 @@ app.get("/movies", async (req, res, next) => {
     next(error);
   }
 });
-// Route for getting weather data
-app.get("/weather", async (req, res, next) => {
-  const { lat, lon } = req.query;
-
-  try {
-    let apiWeatherData = await axios.get(
-      `https://api.weatherbit.io/v2.0/forecast/daily?lat=${lat}&lon=${lon}&key=${process.env.WEATHER_API_KEY}`
-    );
-
-    //  Map the weather data to an array of ForeCast objects and send it as the response
-    let weatherForDays = apiWeatherData.data.data.map((day) => {
-      return new ForeCast(day.valid_date, day.weather.description);
-    });
-    res.json(weatherForDays);
-  } catch (error) {
-    next(error);
-  }
-});
 
 // Route for getting all weather data
 app.get("/", (req, res, next) => {
@@ -113,6 +87,9 @@ app.use((error, req, res, next) => {
   // Send an error response with the error status and message
   res.status(status).json({ message });
 });
+
+// Import the weather module and call it with our app instance
+require("./weather")(app);
 
 // Start listening for incoming requests
 app.listen(PORT, () => {
