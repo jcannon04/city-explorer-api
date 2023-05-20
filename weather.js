@@ -20,6 +20,7 @@ module.exports = function (app) {
       let weatherForDays = apiWeatherData.data.data.map((day) => {
         return new ForeCast(day.valid_date, day.weather.description);
       });
+      
       res.json(weatherForDays);
     } catch (error) {
       next(error);

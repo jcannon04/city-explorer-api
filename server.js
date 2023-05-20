@@ -1,10 +1,8 @@
-
 const express = require("express");
 const app = express();
 const cors = require("cors");
 require("dotenv").config();
 const weatherData = require("./data/apiWeather.json");
-
 
 // Set the port to 8000
 const PORT = process.env.PORT || 3001;
@@ -41,7 +39,6 @@ app.use((error, req, res, next) => {
 // Require the routes defined in other files
 require("./weather")(app);
 require("./movies")(app);
-
 
 // Start listening for incoming requests
 app.listen(PORT, () => {
