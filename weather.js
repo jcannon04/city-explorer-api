@@ -1,5 +1,5 @@
 const axios = require("axios");
-const cache = require("../cache");
+const cache = require("./cache");
 
 module.exports = function (app) {
   // Define a Forecast class to store data for each day's forecast

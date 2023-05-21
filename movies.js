@@ -1,5 +1,5 @@
 const axios = require("axios");
-const cache = require("../cache");
+const cache = require("./cache");
 
 module.exports = function (app) {
   // Define a Movie class to store data for each movie
@@ -23,6 +23,7 @@ module.exports = function (app) {
   // Route for getting movie data
   app.get("/movies", async (req, res, next) => {
     const { city_name } = req.query;
+
     const key = `movies-${city_name}`;
 
     if (cache[key] && Date.now() - cache[key].timestamp < 50000) {
