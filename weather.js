@@ -1,4 +1,6 @@
 const axios = require("axios");
+const cache = require("../cache");
+
 module.exports = function (app) {
   // Define a Forecast class to store data for each day's forecast
   class ForeCast {
@@ -10,6 +12,13 @@ module.exports = function (app) {
   // Route for getting weather data
   app.get("/weather", async (req, res, next) => {
     const { lat, lon } = req.query;
+    const key = `weather-${lat}-${lon}`;
+
+    if (cache[key] && Date.now() - cache[key].timestamp < 50000) {
+      console.log("Cache hit");
+      res.json(cache[key]);
+      return;
+    }
 
     try {
       let apiWeatherData = await axios.get(
@@ -20,7 +29,10 @@ module.exports = function (app) {
       let weatherForDays = apiWeatherData.data.data.map((day) => {
         return new ForeCast(day.valid_date, day.weather.description);
       });
-      
+
+      cache[key] = weatherForDays;
+      cache[key].timestamp = Date.now();
+
       res.json(weatherForDays);
     } catch (error) {
       next(error);
